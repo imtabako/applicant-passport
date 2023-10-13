@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru" xml:lang="ru">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="index.css" />
+<title>Паспорт абитуриента</title>
+</head>
+
+<body>
+    <div class="content">
+        <div class="applicant-passport">
+            <span>Паспорт</span>
+            <form action="users/" method="POST">
+                <div class="applicant-editor">
+                    <div class="photo-editor">
+
+                    </div>
+                    <div class="status-editor">
+
+                    </div>
+                    <!-- lName, fName, pName -->
+                    <div class="form-row">
+                        <div class="flex">
+                            <label for="lname" class="required">Фамилия</label>
+                            <input id="lname" name="lname" type="text" required>
+                        </div>
+                        <div class="flex">
+                            <label for="fname" class="required">Имя</label>
+                            <input id="fname" name="fname" type="text" required>
+                        </div>
+                        <div class="flex">
+                            <label for="pname">Отчество</label>
+                            <input id="pname" name="pname" type="text">
+                        </div>
+                    </div>
+                    <!-- Sex, Bitrhday, Citizenship -->
+                    <div class="form-row">
+                        <div class="flex">
+                            <label for="sex" class="required">Пол</label>
+                            <input id="sex" name="sex" type="text" required>
+                        </div>
+                        <div class="flex">
+                            <label for="birthday" class="required">Дата рождения</label>
+                            <input id="birthday" name="birthday" type="text" required>
+                        </div>
+                        <div class="flex">
+                            <label for="citizenship" class="required">Гражданство</label>
+                            <input id="citizenship" name="citizenship" type="text" required>
+                        </div>
+                    </div>
+                    <!-- Birthplace -->
+                    <div class="form-row">
+                        <div class="flex">
+                            <label for="birthplace" class="required">Место рождения</label>
+                            <label for="birthplace" class="small">
+                                Место рождения (заполнять <b>строго</b> как в паспорте)
+                            </label>
+                            <textarea id="birthplace" name="birthplace" required></textarea>
+                        </div>
+                    </div>
+                    <!-- Doc type, Series, Number -->
+                    <div class="form-row">
+                        <div class="flex">
+                            <label for="doctype" class="required">Тип документа</label>
+                            <input id="doctype" name="doctype" type="text" required>
+                        </div>
+                        <div class="flex">
+                            <label for="series" class="required">Серия</label>
+                            <input id="series" name="series" type="text" required>
+                        </div>
+                        <div class="flex">
+                            <label for="number" class="required">Номер</label>
+                            <input id="number" name="number" type="text" required>
+                        </div>
+                    </div>
+                    <!-- Receipt date, Code -->
+                    <div class="form-row">
+                        <div class="flex">
+                            <label for="receipt_date" class="required">Дата выдачи</label>
+                            <input id="receipt_date" name="receipt_date" type="text" required>
+                        </div>
+                        <div class="flex">
+                            <label for="code">Код подразделения</label>
+                            <input id="code" name="code" type="text">
+                        </div>
+                    </div>
+                    <!-- Received by -->
+                    <div class="form-row">
+                        <div class="flex">
+                            <label for="issued_by" class="required">Кем выдан</label>
+                            <label for="issued_by" class="small">
+                                Кем выдан документ (заполнять <b>строго</b> как в паспорте)
+                            </label>
+                            <textarea id="issued_by" name="issued_by" required></textarea>
+                        </div>
+                    </div>
+                    <!-- Comment -->
+                    <hr>
+                    <div class="form-row">
+                        <div class="flex">
+                            <label for="comment">Комментарий к абитуриенту</label>
+                            <textarea id="comment" name="comment"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <input class="form-submit" type="submit" value="Принято">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        /* tweak for resizing textareas according to input */
+        const tx = document.getElementsByTagName("textarea");
+        for (let i = 0; i < tx.length; i++) {
+          tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+          tx[i].addEventListener("input", OnInput, false);
+        }
+
+        function OnInput() {
+          this.style.height = this.style['min-height'];
+          this.style.height = (this.scrollHeight) + "px";
+        }
+    </script>
+</body>
+
+</html>
