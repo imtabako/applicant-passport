@@ -8,6 +8,7 @@ class PassportBase(BaseModel):
     series: str
     number: str
     citizenship: str
+    birthplace: str
     receipt_date: date
     division_code: str | None = None
     issued_by: str

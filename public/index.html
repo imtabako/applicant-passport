@@ -10,7 +10,7 @@
     <div class="content">
         <div class="applicant-passport">
             <span>Паспорт</span>
-            <form action="users/" method="POST">
+            <form id='passport-form' action="postdata" method="post">
                 <div class="applicant-editor">
                     <div class="photo-editor">
 
@@ -21,27 +21,32 @@
                     <!-- lName, fName, pName -->
                     <div class="form-row">
                         <div class="flex">
-                            <label for="lname" class="required">Фамилия</label>
-                            <input id="lname" name="lname" type="text" required>
+                            <label for="last_name" class="required">Фамилия</label>
+                            <input id="last_name" name="last_name" type="text" required>
                         </div>
                         <div class="flex">
-                            <label for="fname" class="required">Имя</label>
-                            <input id="fname" name="fname" type="text" required>
+                            <label for="first_name" class="required">Имя</label>
+                            <input id="first_name" name="first_name" type="text" required>
                         </div>
                         <div class="flex">
-                            <label for="pname">Отчество</label>
-                            <input id="pname" name="pname" type="text">
+                            <label for="patronymic">Отчество</label>
+                            <input id="patronymic" name="patronymic" type="text">
                         </div>
                     </div>
                     <!-- Sex, Bitrhday, Citizenship -->
                     <div class="form-row">
                         <div class="flex">
                             <label for="sex" class="required">Пол</label>
-                            <input id="sex" name="sex" type="text" required>
+                            <select id="sex" name="sex">
+                                <option hidden disabled selected value></option>
+                                <option value="m">Муж</option>
+                                <option value="f">Жен</option>
+                            </select>
                         </div>
                         <div class="flex">
                             <label for="birthday" class="required">Дата рождения</label>
-                            <input id="birthday" name="birthday" type="text" required>
+                            <input id="birthday" name="birthday" type="date" required >
+<!--                            <input id="birthday" name="birthday" type="date" required pattern="\d{2}.\d{2}.\d{4}" />-->
                         </div>
                         <div class="flex">
                             <label for="citizenship" class="required">Гражданство</label>
@@ -77,11 +82,12 @@
                     <div class="form-row">
                         <div class="flex">
                             <label for="receipt_date" class="required">Дата выдачи</label>
-                            <input id="receipt_date" name="receipt_date" type="text" required>
+                            <input id="receipt_date" name="receipt_date" type="date" required>
+<!--                            <input id="receipt_date" name="receipt_date" type="date" required pattern="\d{2}.\d{2}\d{4}">-->
                         </div>
                         <div class="flex">
-                            <label for="code">Код подразделения</label>
-                            <input id="code" name="code" type="text">
+                            <label for="division_code">Код подразделения</label>
+                            <input id="division_code" name="division_code" type="text">
                         </div>
                     </div>
                     <!-- Received by -->
@@ -121,6 +127,23 @@
           this.style.height = this.style['min-height'];
           this.style.height = (this.scrollHeight) + "px";
         }
+
+        /* disable page refresh */
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('passport-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                var formData = new FormData(this);
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/postdata', true);
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        console.log(xhr.response);
+                    }
+                };
+                xhr.send(formData);
+            });
+        });
     </script>
 </body>
 

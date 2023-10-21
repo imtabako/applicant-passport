@@ -26,6 +26,7 @@ class Passport(Base):
     series = Column(String)
     number = Column(String)
     citizenship = Column(String)
+    birthplace = Column(String)
     receipt_date = Column(Date)
     division_code = Column(String)  # opt
     issued_by = Column(String)
