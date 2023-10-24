@@ -8,9 +8,28 @@
 
 <body>
     <div class="content">
+        <nav class="debug-nav">
+            <label>Test API:</label>
+            <ul>
+                <li><a href="/users" target="_blank">Users</a></li>
+                <li><a href="/passports" target="_blank">Passports</a></li>
+                <li><a href="/user" target="_blank">User</a></li>
+            </ul>
+        </nav>
+        <hr>
         <div class="applicant-passport">
             <span>Паспорт</span>
             <form id='passport-form' action="postdata" method="post">
+                <div class="image-uploader">
+                    <label>Фото</label>
+                    <label for="file" id="drop-area">
+                        <input type="file" accept="image/*" id="file" name="file" hidden>
+                        <div id="img-view">
+<!--                            <img src="assets/icon.png">-->
+                            <p>Drag and drop or click here to upload photo</p>
+                        </div>
+                    </label>
+                </div>
                 <div class="applicant-editor">
                     <div class="photo-editor">
 
@@ -22,7 +41,7 @@
                     <div class="form-row">
                         <div class="flex">
                             <label for="last_name" class="required">Фамилия</label>
-                            <input id="last_name" name="last_name" type="text" required>
+                            <input id="last_name" name="last_name" type="text" max="" required>
                         </div>
                         <div class="flex">
                             <label for="first_name" class="required">Имя</label>
@@ -115,36 +134,7 @@
             </form>
         </div>
     </div>
-    <script>
-        /* tweak for resizing textareas according to input */
-        const tx = document.getElementsByTagName("textarea");
-        for (let i = 0; i < tx.length; i++) {
-          tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
-          tx[i].addEventListener("input", OnInput, false);
-        }
-
-        function OnInput() {
-          this.style.height = this.style['min-height'];
-          this.style.height = (this.scrollHeight) + "px";
-        }
-
-        /* disable page refresh */
-        document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('passport-form').addEventListener('submit', function (e) {
-                e.preventDefault();
-
-                var formData = new FormData(this);
-                var xhr = new XMLHttpRequest();
-                xhr.open('POST', '/postdata', true);
-                xhr.onload = function () {
-                    if (xhr.status === 200) {
-                        console.log(xhr.response);
-                    }
-                };
-                xhr.send(formData);
-            });
-        });
-    </script>
+    <script src="index.js"></script>
 </body>
 
 </html>

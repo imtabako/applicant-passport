@@ -33,6 +33,41 @@ hr {
     width: 70%;
 }
 
+.image-uploader {
+    /*max-height: 500px;*/
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    margin-top: 1rem;
+    border: 1px solid #ccc;
+    box-shadow: 2px 2px 10px #ccc;
+}
+
+#drop-area {
+    margin: auto;
+    width: 500px;
+    min-height: 500px;
+    /*padding: 30px;*/
+    text-align: center;
+    border-radius: 20px;
+}
+
+#img-view {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    border-radius: 20px;
+    border: 2px #a0a0a0 dashed;
+    background-position: center;
+    background-size: cover;
+    display: flex;
+    text-align: center;
+}
+#img-view p {
+    margin: auto;
+}
+/*#img-view*/
+
 .applicant-passport span {
     display: flex;
     font-size: calc(100% + 8px);
@@ -44,6 +79,7 @@ hr {
     padding-top: 1rem;
     padding-left: 1rem;
     padding-right: 1rem;
+    margin-top: 1rem;
     border: 1px solid #ccc;
     box-shadow: 2px 2px 10px #ccc;
 }
@@ -60,9 +96,6 @@ hr {
 }
 
 .form-row {
-    /*display: grid;*/
-    /*grid-column-gap: 30px;*/
-    /*grid-row-gap: 1em;*/
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -78,6 +111,24 @@ hr {
 
 .flex label {
     margin-bottom: .5rem;
+}
+
+.debug-nav {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 10px;
+}
+
+.debug-nav label {
+    padding-bottom: 10px;
+}
+
+.debug-nav ul {
+    margin: auto;
+    list-style: none;
+    display: flex;
+    gap: 2rem;
 }
 
 label.required:after {
