@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru" xml:lang="ru">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Паспорт абитуриента</title>
+</head>
+
+<body>
+    <div class="content">
+        {% block content %}
+
+        {% endblock content %}
+    </div>
+    <div class="footer">
+        <button id="themeToggle">Change Theme</button>
+    </div>
+    <script>
+        function toggleDarkTheme() {
+            const element = document.body;
+            element.classList.toggle("dark-theme");
+
+            const inputs = document.getElementsByTagName("input");
+            for (let i of inputs) {
+                i.classList.toggle("dark-theme");
+            }
+
+            const textareas = document.getElementsByTagName("textarea");
+            for (let i of textareas) {
+                i.classList.toggle("dark-theme");
+            }
+
+            const selects = document.getElementsByTagName("select");
+            for (let i of selects) {
+                i.classList.toggle("dark-theme");
+            }
+        }
+
+        document.getElementById('themeToggle').addEventListener('click', toggleDarkTheme);
+
+        // toggle dark mode if nighttime
+        const hours = new Date().getHours();
+        if (hours >= 0 && hours < 8) {
+            toggleDarkTheme();
+        }
+    </script>
+</body>

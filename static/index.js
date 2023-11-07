@@ -28,6 +28,9 @@ document.addEventListener('DOMContentLoaded', function () {
         xhr.onload = function () {
             if (xhr.status === 200) {
                 console.log(xhr.response);
+            } else {
+                console.log('ERROR')
+                console.log(xhr.response)
             }
         };
         xhr.send(formData);

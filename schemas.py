@@ -29,10 +29,11 @@ class Passport(PassportBase):
 class UserBase(BaseModel):
     first_name: str
     last_name: str
-    patronymic: str
+    patronymic: str | None = None
     sex: bool
     birthday: date
     comment: str | None = None
+    photo_path: str | None = None
 
 
 class UserCreate(UserBase):

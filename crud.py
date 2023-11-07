@@ -6,10 +6,12 @@ import models
 import schemas
 
 
+# user by id
 def get_user(db: Session, user_id: int):
     return db.query(models.User).filter(models.User.id == user_id).first()
 
 
+# user by full name
 def get_users_by_name(db: Session, first_name: str, last_name: str, patronymic: str):
     return (db.query(models.User)
             .filter(
@@ -19,6 +21,7 @@ def get_users_by_name(db: Session, first_name: str, last_name: str, patronymic: 
             .all())
 
 
+# user by all fields
 def get_user_by_schema(db: Session, user: schemas.UserBase):
     return (db.query(models.User)
             .filter(models.User.last_name == user.last_name,
@@ -30,24 +33,28 @@ def get_user_by_schema(db: Session, user: schemas.UserBase):
             .first())
 
 
+# list of users
 def get_users(db: Session, skip: int = 0, limit: int = 100):
     return (db.query(models.User)
             .offset(skip).limit(limit)
             .all())
 
 
+# list of user's passports
 def get_user_passports(db: Session, user_id: int):
     return (db.query(models.Passport)
             .filter(models.Passport.user_id == user_id)
             .all())
 
 
+# list of passports
 def get_passports(db: Session, skip: int = 0, limit: int = 100):
     return (db.query(models.Passport)
             .offset(skip).limit(limit)
             .all())
 
 
+# passport by all fields
 def get_passport_by_schema(db: Session, passport: schemas.Passport):
     return (db.query(models.Passport)
             .filter(models.Passport.series == passport.series,
@@ -60,6 +67,7 @@ def get_passport_by_schema(db: Session, passport: schemas.Passport):
             .all())
 
 
+# passport by series & number
 def get_passport_by_series_number(db: Session, user_id: int, series: str, number: str):
     return (db.query(models.Passport)
             .filter(models.Passport.user_id == user_id, models.Passport.series == series,
@@ -81,20 +89,3 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.commit()
     db.refresh(db_user)
     return db_user
-
-#
-#
-# last_name: str,
-# first_name: str,
-# patronymic: str,
-# sex: bool,
-# birthday: date,
-# citizenship: str,
-# birthplace: str,
-# doctype: str,
-# series: str,
-# number: str,
-# receipt_date: str,
-# division_code: str,
-# issued_by: str,
-# comment: str,

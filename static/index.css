@@ -1,8 +1,17 @@
 * {
-    font: normal 16px Verdana, Arial, sans-serif;
+    /*font: normal 16px Verdana, Arial, sans-serif;*/
 }
 
 body {
+    font-family: Arial, SansSerif;
+    transition: background-color 0.3s ease;
+    background-color: white;
+    color: black;
+}
+
+.dark-theme {
+    background-color: #121212;
+    color: #ffffff;
 }
 
 textarea {

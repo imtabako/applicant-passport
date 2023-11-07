@@ -1,17 +1,19 @@
 import shutil
 from datetime import date
 from datetime import datetime
+from random import random
 from typing import Annotated
 import hashlib
 import os
 
 import aiofiles
-from fastapi import FastAPI, Depends, HTTPException, Form, UploadFile, File
+from fastapi import FastAPI, Depends, HTTPException, Form, UploadFile, File, Request
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 import crud
 import models
@@ -22,13 +24,18 @@ from database import SessionLocal, engine
 BUFFER_SIZE = 1 << 16   # buffer size for reading UploadFile
 FILE_SIZE_MAX = 1 << 21 # 2 MiB
 
-image_dir = os.path.join(os.getcwd(), './public/images')
+image_dir = os.path.join(os.getcwd(), 'static/images')
 if not os.path.exists(image_dir):
     os.mkdir(image_dir)
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+templates = Jinja2Templates(directory="templates")
 
 
 # calculate file hash, returns {filename hash}-{file hash}.{extension}
@@ -55,6 +62,12 @@ def get_db():
         db.close()
 
 
+# index.html
+@app.get("/")
+async def index(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
 # find/create user and passport
 #  returns:
 #  0 -- found user and passport
@@ -62,10 +75,10 @@ def get_db():
 #  +2 -- created passport
 @app.post("/postdata")
 async def handle_post(
-        file: UploadFile = File(...),
+        file: UploadFile = File(),
         last_name: str = Form(...),
         first_name: str = Form(...),
-        patronymic: str = Form(...),
+        patronymic: str = Form(None),
         sex: str = Form(...),
         birthday: str = Form(...),
         citizenship: str = Form(...),
@@ -74,9 +87,9 @@ async def handle_post(
         series: str = Form(...),
         number: str = Form(...),
         receipt_date: str = Form(...),
-        division_code: str = Form(...),
+        division_code: str = Form(None),
         issued_by: str = Form(...),
-        comment: str = Form(...),
+        comment: str = Form(None),
         db: Session = Depends(get_db)
 ):
     print(sex)
@@ -85,23 +98,62 @@ async def handle_post(
     # return code
     result = 0
 
-    # re-type to Bool, Date, Date
+    print('FILE')
+    print(file.filename)
+    print(file.size)
+    print(file.content_type)
+    print(file is None)
+
+    print('OPT')
+    print(patronymic)
+    print(division_code)
+    print(comment)
+
+    # validate `sex', `birthday', `receipt_date' and re-type to Bool, Date, Date
     sex = sex == 'm'
     birthday = datetime.strptime(birthday, '%Y-%m-%d').date()
     receipt_date = datetime.strptime(receipt_date, '%Y-%m-%d').date()
 
     # file validation
-    if file.size > FILE_SIZE_MAX:
-        raise HTTPException(status_code=400, detail='File size too large')
+    if file.size > 0:
+        if file.size > FILE_SIZE_MAX:
+            raise HTTPException(status_code=400, detail='File size too large')
 
-    if file.content_type not in ['image/jpeg', 'image/png']:
-        raise HTTPException(status_code=400, detail='Invalid file type')
+        if file.content_type not in ['image/jpeg', 'image/png']:
+            raise HTTPException(status_code=400, detail='Invalid file type')
+    else:
+        print('NO FILE')
 
-    user = schemas.UserCreate(first_name=first_name, last_name=last_name, patronymic=patronymic,
-                              sex=sex, birthday=birthday, comment=comment)
+    # user required schema fields
+    user_fields = {"first_name": first_name, "last_name": last_name, "patronymic": patronymic, "sex": sex,
+                   "birthday": birthday, "comment": comment}
+
+    # photo
+    if file.size > 0:
+        print(file)
+        print(file.filename)
+        print(file.size)  # in bytes
+        # basename = await calculate_sha1(file)
+        # filename = f"{image_dir}/{db_user.id}.{extension}"
+        userid = int(random() * 100) % 20
+        extension = file.filename.split('.')[-1]
+        filename = f"{image_dir}/{userid}.{extension}"
+        print(filename)
+        if os.path.isfile(filename):
+            print(f"Warning: {filename} already exists, rewriting")
+
+        with open(filename, 'wb') as buf:
+            shutil.copyfileobj(file.file, buf)
+        user_fields["photo_path"] = filename
+
+    user = schemas.UserCreate(**user_fields)
     passport = schemas.PassportCreate(doctype=doctype, series=series, number=number, citizenship=citizenship,
                                       birthplace=birthplace, receipt_date=receipt_date, division_code=division_code,
                                       issued_by=issued_by)
+
+    print(user_fields)
+    print(user)
+    print(passport)
 
     # find or create user entity
     db_user = crud.get_user_by_schema(db, user)
@@ -142,14 +194,16 @@ async def handle_post(
     return {"result": result}
 
 
-# return all users' info
+# TODO: OK
+# return all users
 @app.get("/users", response_model=list[schemas.User])
 async def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_users(db, skip=skip, limit=limit)
     return users
 
 
-# return user info
+# TODO: OK
+# return a user
 @app.get("/users/{user_id}", response_model=schemas.User)
 async def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user(db, user_id=user_id)
@@ -158,28 +212,9 @@ async def read_user(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
-# return user's passports
-@app.get("/users/{user_id}/passports", response_model=list[schemas.Passport])
-async def read_user_passports(user_id: int, db: Session = Depends(get_db)):
-    return crud.get_user_passports(db, user_id=user_id)
-
-
+# TODO: OK
 # return all passports
 @app.get("/passports", response_model=list[schemas.Passport])
-async def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+async def read_passports(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     items = crud.get_passports(db, skip=skip, limit=limit)
     return items
-
-
-# rudimentary function
-@app.post("/users", response_model=schemas.User)
-async def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    # totally possible for 2 people to share exact same name, birthday, place of birth
-    db_user = crud.get_users_by_name(db,
-                                     first_name=user.first_name, last_name=user.last_name, patronymic=user.patronymic)
-    if db_user:
-        pass  # Warning
-    return crud.create_user(db=db, user=user)
-
-
-app.mount("/", StaticFiles(directory="public", html=True), name="static")

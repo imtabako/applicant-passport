@@ -13,7 +13,8 @@ class User(Base):
     patronymic = Column(String)     # opt
     sex = Column(Boolean, default=True)
     birthday = Column(Date)
-    comment = Column(String)
+    comment = Column(String)        # opt
+    photo_path = Column(String)     # opt
 
     passports = relationship("Passport", back_populates="user")
 
